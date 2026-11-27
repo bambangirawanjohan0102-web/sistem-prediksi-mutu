@@ -4,7 +4,7 @@ import joblib
 from gm import analisis_gemini
 st.set_page_config(page_title="prediksi kualitas jagung", page_icon= "🌽", layout="centered")
 st.title("🌽cornsmart AI")
-st.write("made by bambang, prediksi metode XGBoost.")
+st.write("prediksi metode XGBoost.")
 df = pd.read_csv("Book.csv", header=0)
 nama_input = df.columns[1:5]
 nama_output = df.columns[5:9]
@@ -38,7 +38,7 @@ if tombol:
     str(nama_output[3]):str(kategori)}
 st.subheader("Analisis Berdasarkan Hasil Prediksi")
 
-if st.button("✨ Analisis dengan Gemini AI"):
+if st.button("🔍lakukan analisis apa emot yang bagus untuk untuk icon bukan emot untuk memberikan perintah lakukan analisis"):
     with st.spinner("Gemini sedang menganalisis..."):
         try:
             hasil_analisis = analisis_gemini(input_gemini, hasil_prediksi)
