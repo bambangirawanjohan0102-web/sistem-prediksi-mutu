@@ -40,11 +40,17 @@ if tombol:
 st.session_state["hasil_prediksi"] = hasil_prediksi
 st.subheader("Analisis Berdasarkan Hasil Prediksi")
 
-if st.button("🔍lakukan analisis"):
-    with st.spinner("Gemini sedang menganalisis..."):
-        try:
-            hasil_analisis = analisis_gemini(input_gemini, hasil_prediksi)
-            st.markdown(hasil_analisis)
+if "hasil_prediksi" in st.session_state:
+    if st.button("🔍 Lakukan Analisis"):
+        with st.spinner("Gemini sedang menganalisis..."):
+            try:
+                hasil_analisis = analisis_gemini(
+                    st.session_state["input_gemini"],
+                    st.session_state["hasil_prediksi"]
+                )
+                st.markdown(hasil_analisis)
 
-        except Exception as e:
-            st.error(f"Terjadi kesalahan saat analisis Gemini: {e}")
+            except Exception as e:
+                st.error(f"Terjadi kesalahan saat analisis Gemini: {e}")
+else:
+    st.info("Silakan lakukan prediksi terlebih dahulu.")
