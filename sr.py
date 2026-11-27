@@ -36,6 +36,8 @@ if tombol:
     str(nama_output[1]): round(float(hasil_1 ), 2),
     str(nama_output[2]): round(float(hasil_2), 2), 
     str(nama_output[3]):str(kategori)}
+    st.session_state["input_gemini"] = input_gemini
+st.session_state["hasil_prediksi"] = hasil_prediksi
 st.subheader("Analisis Berdasarkan Hasil Prediksi")
 
 if st.button("🔍lakukan analisis"):
