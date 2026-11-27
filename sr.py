@@ -38,7 +38,7 @@ if tombol:
     str(nama_output[3]):str(kategori)}
 st.subheader("Analisis Berdasarkan Hasil Prediksi")
 
-if st.button("🔍lakukan analisis apa emot yang bagus untuk untuk icon bukan emot untuk memberikan perintah lakukan analisis"):
+if st.button("🔍lakukan analisis"):
     with st.spinner("Gemini sedang menganalisis..."):
         try:
             hasil_analisis = analisis_gemini(input_gemini, hasil_prediksi)
