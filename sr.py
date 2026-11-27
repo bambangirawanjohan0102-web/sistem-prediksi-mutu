@@ -1,43 +1,85 @@
+
 import streamlit as st
 import pandas as pd
 import joblib
 from gm import analisis_gemini
-st.set_page_config(page_title="prediksi kualitas jagung", page_icon= "🌽", layout="centered")
-st.title("🌽cornsmart AI")
-st.write("prediksi metode XGBoost.")
+
+st.set_page_config(
+    page_title="Prediksi Kualitas Jagung",
+    page_icon="🌽",
+    layout="centered"
+)
+
+st.title("🌽 Cornsmart AI")
+st.write("Prediksi kualitas jagung menggunakan metode XGBoost.")
+
 df = pd.read_csv("Book.csv", header=0)
 nama_input = df.columns[1:5]
 nama_output = df.columns[5:9]
+
 model_0 = joblib.load("model_0.pkl")
 model_1 = joblib.load("model_1.pkl")
 model_2 = joblib.load("model_2.pkl")
 model_3 = joblib.load("model_3.pkl")
 encoder = joblib.load("label_encoder.pkl")
-st.subheader("Masukkan Data jagung")
-with st.form("form_prediksi"): 
+
+st.subheader("Masukkan Data Jagung")
+
+with st.form("form_prediksi"):
     kadar_air = st.number_input(str(nama_input[0]), value=0.0)
     suhu = st.number_input(str(nama_input[1]), value=0.0)
     rh = st.number_input(str(nama_input[2]), value=0.0)
     lama_simpan = st.number_input(str(nama_input[3]), value=0.0)
-    tombol = st.form_submit_button("prediksi")
+
+    tombol = st.form_submit_button("Prediksi")
+
 if tombol:
-    data_baru = pd.DataFrame([[kadar_air, suhu, rh, lama_simpan]], columns=nama_input)
+    data_baru = pd.DataFrame(
+        [[kadar_air, suhu, rh, lama_simpan]],
+        columns=nama_input
+    )
+
     hasil_0 = model_0.predict(data_baru)[0]
     hasil_1 = model_1.predict(data_baru)[0]
     hasil_2 = model_2.predict(data_baru)[0]
     hasil_3 = model_3.predict(data_baru)[0]
+
     kategori = encoder.inverse_transform([int(hasil_3)])[0]
-    st.subheader("hasil prediksi")
-    tabel = pd.DataFrame({"variabel": nama_output, "hasil_prediksi": [round(float(hasil_0), 2), round(float(hasil_1), 2), round(float(hasil_2), 2), kategori]})
+
+    st.subheader("Hasil Prediksi")
+
+    tabel = pd.DataFrame({
+        "variabel": nama_output,
+        "hasil_prediksi": [
+            round(float(hasil_0), 2),
+            round(float(hasil_1), 2),
+            round(float(hasil_2), 2),
+            kategori
+        ]
+    })
+
     tabel["hasil_prediksi"] = tabel["hasil_prediksi"].astype(str)
     st.table(tabel)
-    input_gemini = {"kadar air": kadar_air, "suhu": suhu, "rh": rh, "lama_simpan": lama_simpan}
-    hasil_prediksi ={str(nama_output[0]): round(float(hasil_0), 2), 
-    str(nama_output[1]): round(float(hasil_1 ), 2),
-    str(nama_output[2]): round(float(hasil_2), 2), 
-    str(nama_output[3]):str(kategori)}
+
+    input_gemini = {
+        "kadar air": kadar_air,
+        "suhu": suhu,
+        "rh": rh,
+        "lama_simpan": lama_simpan
+    }
+
+    hasil_prediksi = {
+        str(nama_output[0]): round(float(hasil_0), 2),
+        str(nama_output[1]): round(float(hasil_1), 2),
+        str(nama_output[2]): round(float(hasil_2), 2),
+        str(nama_output[3]): str(kategori)
+    }
+
+    # Simpan hasil prediksi
     st.session_state["input_gemini"] = input_gemini
-st.session_state["hasil_prediksi"] = hasil_prediksi
+    st.session_state["hasil_prediksi"] = hasil_prediksi
+
+# Bagian analisis Gemini
 st.subheader("Analisis Berdasarkan Hasil Prediksi")
 
 if "hasil_prediksi" in st.session_state:
@@ -48,6 +90,7 @@ if "hasil_prediksi" in st.session_state:
                     st.session_state["input_gemini"],
                     st.session_state["hasil_prediksi"]
                 )
+
                 st.markdown(hasil_analisis)
 
             except Exception as e:
