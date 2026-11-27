@@ -1,4 +1,5 @@
 
+
 import streamlit as st
 import pandas as pd
 import joblib
@@ -46,54 +47,67 @@ if tombol:
 
     kategori = encoder.inverse_transform([int(hasil_3)])[0]
 
-    st.subheader("Hasil Prediksi")
-
-    tabel = pd.DataFrame({
-        "variabel": nama_output,
-        "hasil_prediksi": [
-            round(float(hasil_0), 2),
-            round(float(hasil_1), 2),
-            round(float(hasil_2), 2),
-            kategori
-        ]
-    })
-
-    tabel["hasil_prediksi"] = tabel["hasil_prediksi"].astype(str)
-    st.table(tabel)
-
-    input_gemini = {
-        "kadar air": kadar_air,
+    st.session_state["input_gemini"] = {
+        "kadar_air": kadar_air,
         "suhu": suhu,
         "rh": rh,
         "lama_simpan": lama_simpan
     }
 
-    hasil_prediksi = {
+    st.session_state["hasil_prediksi"] = {
         str(nama_output[0]): round(float(hasil_0), 2),
         str(nama_output[1]): round(float(hasil_1), 2),
         str(nama_output[2]): round(float(hasil_2), 2),
         str(nama_output[3]): str(kategori)
     }
 
-    # Simpan hasil prediksi
-    st.session_state["input_gemini"] = input_gemini
-    st.session_state["hasil_prediksi"] = hasil_prediksi
+    st.session_state["prediksi_selesai"] = True
 
-# Bagian analisis Gemini
-st.subheader("Analisis Berdasarkan Hasil Prediksi")
 
-if "hasil_prediksi" in st.session_state:
+if st.session_state.get("prediksi_selesai", False):
+
+    st.subheader("Hasil Prediksi")
+
+    hasil = st.session_state["hasil_prediksi"]
+
+    tabel = pd.DataFrame({
+        "Variabel": list(hasil.keys()),
+        "Hasil Prediksi": [str(v) for v in hasil.values()]
+    })
+
+    st.table(tabel)
+
+    st.divider()
+
+    st.subheader("Analisis Menggunakan Gemini")
+
+    st.write(
+        "Masukkan API Key Gemini milik Anda "
+        "untuk melakukan analisis hasil prediksi."
+    )
+
+    api_key = st.text_input(
+        "API Key Gemini",
+        type="password",
+        placeholder="Masukkan API Key Gemini"
+    )
+
     if st.button("🔍 Lakukan Analisis"):
-        with st.spinner("sedang melakukan analisis..."):
-            try:
+
+        if not api_key.strip():
+            st.warning("Silakan masukkan API Key Gemini terlebih dahulu.")
+
+        else:
+            with st.spinner("Sedang melakukan analisis..."):
+
                 hasil_analisis = analisis_gemini(
                     st.session_state["input_gemini"],
-                    st.session_state["hasil_prediksi"]
+                    st.session_state["hasil_prediksi"],
+                    api_key
                 )
 
+                st.subheader("Hasil Analisis Gemini")
                 st.markdown(hasil_analisis)
 
-            except Exception as e:
-                st.error(f"Terjadi kesalahan saat analisis Gemini: {e}")
 else:
-    st.info("Silakan lakukan prediksi terlebih dahulu.")
+    st.info("Silakan masukkan data jagung dan lakukan prediksi terlebih dahulu.")
