@@ -36,6 +36,13 @@ if tombol:
     str(nama_output[1]): round(float(hasil_1 ), 2),
     str(nama_output[2]): round(float(hasil_2), 2), 
     str(nama_output[3]):str(kategori)}
-    st.subheader("gemini sedang analisis jawaban untuk bambang...")
-    hasil_analisis = analisis_gemini(input_gemini, hasil_prediksi)
-    st.markdown(hasil_analisis)
+st.subheader("Analisis Berdasarkan Hasil Prediksi")
+
+if st.button("✨ Analisis dengan Gemini AI"):
+    with st.spinner("Gemini sedang menganalisis..."):
+        try:
+            hasil_analisis = analisis_gemini(input_gemini, hasil_prediksi)
+            st.markdown(hasil_analisis)
+
+        except Exception as e:
+            st.error(f"Terjadi kesalahan saat analisis Gemini: {e}")
