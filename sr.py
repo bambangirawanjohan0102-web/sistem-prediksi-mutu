@@ -79,7 +79,7 @@ if st.session_state.get("prediksi_selesai", False):
 
     st.divider()
 
-    st.subheader("Analisis Menggunakan Gemini")
+    st.subheader("proses analisis")
 
     st.write(
         "Masukkan API Key Gemini milik Anda "
