@@ -84,7 +84,7 @@ st.subheader("Analisis Berdasarkan Hasil Prediksi")
 
 if "hasil_prediksi" in st.session_state:
     if st.button("🔍 Lakukan Analisis"):
-        with st.spinner("Gemini sedang menganalisis..."):
+        with st.spinner("sedang melakukan analisis..."):
             try:
                 hasil_analisis = analisis_gemini(
                     st.session_state["input_gemini"],
